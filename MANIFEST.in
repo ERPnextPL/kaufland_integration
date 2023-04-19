@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include kaufland_integration *.css
+recursive-include kaufland_integration *.csv
+recursive-include kaufland_integration *.html
+recursive-include kaufland_integration *.ico
+recursive-include kaufland_integration *.js
+recursive-include kaufland_integration *.json
+recursive-include kaufland_integration *.md
+recursive-include kaufland_integration *.png
+recursive-include kaufland_integration *.py
+recursive-include kaufland_integration *.svg
+recursive-include kaufland_integration *.txt
+recursive-exclude kaufland_integration *.pyc

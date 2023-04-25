@@ -6,7 +6,7 @@ from rq.job import Job, JobStatus
 from rq.registry import StartedJobRegistry
 from rq import get_current_job, Connection, Queue
 from frappe.utils.background_jobs import get_queue, get_queues
-import pdb
+from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
 
 import time
 import hmac
@@ -26,21 +26,7 @@ def delete_jobs_on_uninstall():
     frappe.db.commit()
 
 
-def install():
-    fields = [
-        {
-            "label": _("Field 1"),
-            "fieldname": "field_1",
-            "fieldtype": "Data",
-            "required": 1
-        },
-        {
-            "label": _("Field 2"),
-            "fieldname": "field_2",
-            "fieldtype": "Data",
-            "required": 1
-        }
-    ]
+# def install():
 #    frappe.utils.background_jobs.enqueue(
 #     job_name="test",
 #     method="kaufland_integration.kaufland_integration.scheduler.kaufland.test",
@@ -49,7 +35,6 @@ def install():
 
 def uninstall():
     delete_jobs_on_uninstall()
-
     # frappe.utils.background_jobs.cancel(
     #     job_name="test",
     #     method='kaufland_integration.kaufland_integration.scheduler.kaufland.test',
@@ -69,14 +54,8 @@ def add_comment(comment):
     }).insert(ignore_permissions=True)
 
 
-def sign_request(method, uri, body, timestamp, secret_key):
-    plain_text = "\n".join([method, uri, body, str(timestamp)])
-
-    digest_maker = hmac.new(secret_key.encode(), None, hashlib.sha256)
-    digest_maker.update(plain_text.encode())
-    return digest_maker.hexdigest()
-
 
 def get_order():
     job = get_current_job()
-    add_comment("mmmmm "+str(job))
+    cred = KauflandCredentials()
+    add_comment(cred.key)

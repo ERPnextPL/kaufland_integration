@@ -25,7 +25,22 @@ def delete_jobs_on_uninstall():
     frappe.db.delete('Scheduled Job Type', {'name': 'kaufland.get_order'})
     frappe.db.commit()
 
-# def install():
+
+def install():
+    fields = [
+        {
+            "label": _("Field 1"),
+            "fieldname": "field_1",
+            "fieldtype": "Data",
+            "required": 1
+        },
+        {
+            "label": _("Field 2"),
+            "fieldname": "field_2",
+            "fieldtype": "Data",
+            "required": 1
+        }
+    ]
 #    frappe.utils.background_jobs.enqueue(
 #     job_name="test",
 #     method="kaufland_integration.kaufland_integration.scheduler.kaufland.test",
@@ -43,7 +58,8 @@ def uninstall():
 
 
 def add_comment(comment):
-    last_log = frappe.get_last_doc("Scheduled Job Log", filters={"scheduled_job_type": "kaufland.get_order", "status":"Start"},order_by="creation desc")
+    last_log = frappe.get_last_doc("Scheduled Job Log", filters={
+                                   "scheduled_job_type": "kaufland.get_order", "status": "Start"}, order_by="creation desc")
     frappe.get_doc({
         "doctype": "Comment",
         "comment_type": "Info",
@@ -64,4 +80,3 @@ def sign_request(method, uri, body, timestamp, secret_key):
 def get_order():
     job = get_current_job()
     add_comment("mmmmm "+str(job))
-

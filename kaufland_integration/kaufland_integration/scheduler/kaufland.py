@@ -6,7 +6,7 @@ from rq.job import Job, JobStatus
 from rq.registry import StartedJobRegistry
 from rq import get_current_job, Connection, Queue
 from frappe.utils.background_jobs import get_queue, get_queues
-import pdb
+from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
 
 import time
 import hmac
@@ -25,6 +25,7 @@ def delete_jobs_on_uninstall():
     frappe.db.delete('Scheduled Job Type', {'name': 'kaufland.get_order'})
     frappe.db.commit()
 
+
 # def install():
 #    frappe.utils.background_jobs.enqueue(
 #     job_name="test",
@@ -34,7 +35,6 @@ def delete_jobs_on_uninstall():
 
 def uninstall():
     delete_jobs_on_uninstall()
-
     # frappe.utils.background_jobs.cancel(
     #     job_name="test",
     #     method='kaufland_integration.kaufland_integration.scheduler.kaufland.test',
@@ -43,7 +43,8 @@ def uninstall():
 
 
 def add_comment(comment):
-    last_log = frappe.get_last_doc("Scheduled Job Log", filters={"scheduled_job_type": "kaufland.get_order", "status":"Start"},order_by="creation desc")
+    last_log = frappe.get_last_doc("Scheduled Job Log", filters={
+                                   "scheduled_job_type": "kaufland.get_order", "status": "Start"}, order_by="creation desc")
     frappe.get_doc({
         "doctype": "Comment",
         "comment_type": "Info",
@@ -53,15 +54,8 @@ def add_comment(comment):
     }).insert(ignore_permissions=True)
 
 
-def sign_request(method, uri, body, timestamp, secret_key):
-    plain_text = "\n".join([method, uri, body, str(timestamp)])
-
-    digest_maker = hmac.new(secret_key.encode(), None, hashlib.sha256)
-    digest_maker.update(plain_text.encode())
-    return digest_maker.hexdigest()
-
 
 def get_order():
     job = get_current_job()
-    add_comment("mmmmm "+str(job))
-
+    cred = KauflandCredentials()
+    add_comment(cred.key)

@@ -3,6 +3,7 @@ from rq.job import Job
 from rq import Connection
 from frappe.utils.background_jobs import get_queues
 
+
 def delete_all_jobs():
     with Connection():
         queues = get_queues()
@@ -14,22 +15,26 @@ def delete_all_jobs():
 
     frappe.db.delete('Scheduled Job Type', {'name': 'kaufland.get_orders'})
     frappe.db.commit()
-    
-def run_single_job(jobName:str,methodPath:str,queue:str,id:str):
-    frappe.enqueue(
-    job_name=jobName,
-    method=methodPath,
-    is_async = True,
-    queue=queue,
-    id_order = id)    
 
-def cancel_single_job(jobName:str,methodPath:str,queue:str):
+
+def set_job_for_order_async(jobName: str, methodPath: str, queue: str, id: str, log):
+    return frappe.enqueue(
+        job_name=jobName,
+        method=methodPath,
+        is_async=True,
+        queue=queue,
+        id_order=id,
+        log=log)
+
+
+def cancel_single_job(jobName: str, methodPath: str, queue: str):
     frappe.utils.background_jobs.cancel(
-    job_name=jobName,
-    method=methodPath,
-    queue=queue,
+        job_name=jobName,
+        method=methodPath,
+        queue=queue,
     )
-    
+
+
 def add_comment_to_job(reference, comment):
     frappe.get_doc({
         "doctype": "Comment",
@@ -38,4 +43,3 @@ def add_comment_to_job(reference, comment):
         "reference_name": reference.name,
         "content": comment
     }).insert(ignore_permissions=True)
-    

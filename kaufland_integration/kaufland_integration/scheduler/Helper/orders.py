@@ -1,24 +1,22 @@
 import json
-import pdb
 import requests
 import time
 import hmac
 import hashlib
 import urllib.parse
-from datetime import datetime
 import frappe
 from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
+from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext import check_if_order_exist
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job
-from rq import get_current_job
 
 
-def get_headers(url:str,timestamp:int):
+def get_headers(url: str, timestamp: int):
     creditionals = KauflandCredentials()
     return {
-        'Accept':'application/json',
+        'Accept': 'application/json',
         'Shop-Client-Key': creditionals.key,
         'Shop-Timestamp': str(timestamp),
-        'Shop-Signature': sign_request('GET', url,'', timestamp, creditionals.key_secret)
+        'Shop-Signature': sign_request('GET', url, '', timestamp, creditionals.key_secret)
     }
 
 def sign_request(method, uri, body, timestamp, secret_key):
@@ -27,24 +25,34 @@ def sign_request(method, uri, body, timestamp, secret_key):
     digest_maker.update(plain_text.encode())
     return digest_maker.hexdigest()
 
-def get_orders_form_kaufland(dateFrom:str):
-    params = {'storefront': 'de', 'fulfillment_type': 'fulfilled_by_merchant','ts_created_from_iso':dateFrom}
+#################################################################################################
+def get_orders_form_kaufland(dateFrom: str):
+    params = {'storefront': 'de', 'fulfillment_type': 'fulfilled_by_merchant',
+              'ts_created_from_iso': dateFrom}
     uri = f'https://sellerapi.kaufland.com/v2/orders?{urllib.parse.urlencode(params)}'
     timestamp = int(time.time())
-    response = requests.get(uri, headers=get_headers(uri,timestamp))
-    data = json.loads(response.content.decode("utf-8") )
-    return [id_order["id_order"] for id_order in data["data"]]
+    response = requests.get(uri, headers=get_headers(uri, timestamp))
+    data = json.loads(response.content.decode("utf-8"))
+    if data != None:
+        return [id_order["id_order"] for id_order in data["data"]]
+    else:
+        return None
 
-
-def get_order_by_id(id_order:str):
-    job = get_current_job()
-    pdb.set_trace() 
-    log =  frappe.get_last_doc("RQ Job", filters={"job_id": job.id ,"status": "queued"}, order_by="creation desc")
+#################################################################################################
+def get_order_form_kaufland_by_id(id_order: str, log):
     params = {'embedded': 'order_invoices'}
     uri = f'https://sellerapi.kaufland.com/v2/orders/{id_order}?{urllib.parse.urlencode(params)}'
     timestamp = int(time.time())
-    response = requests.get(uri, headers=get_headers(uri,timestamp))
-    data = json.loads(response.content.decode("utf-8") )
-    add_comment_to_job(log,f"Order[{id_order}]: {str(data)}")
+    response = requests.get(uri, headers=get_headers(uri, timestamp))
+    data = json.loads(response.content.decode("utf-8"))
+    if data != None:
+        add_comment_to_job(log, f"Order[{id_order}]: {str(data)}")
+        check_if_order_exist(id_order,log)
+        return data["data"]
+    else:
+        add_comment_to_job(log, f"No data for order {id_order}")
+        return None
+    
+#################################################################################################
 
-    return data["data"]
+

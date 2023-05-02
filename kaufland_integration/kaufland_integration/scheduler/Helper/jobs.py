@@ -18,12 +18,21 @@ def delete_all_jobs():
 
 
 def set_job_for_order_async(jobName: str, methodPath: str, queue: str, id: str, log):
-    return frappe.enqueue(
+    frappe.enqueue(
         job_name=jobName,
         method=methodPath,
         is_async=True,
         queue=queue,
         id_order=id,
+        log=log)
+
+def set_job_async(jobName: str, methodPath: str, queue: str, data,log):
+    frappe.enqueue(
+        job_name=jobName,
+        method=methodPath,
+        is_async=True,
+        queue=queue,
+        data=data,
         log=log)
 
 

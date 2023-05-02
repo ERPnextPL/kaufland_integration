@@ -17,7 +17,7 @@ app_license = "MIT"
 # ------------
 
 # before_uninstall = "kaufland_integration.uninstall.before_uninstall"
-after_uninstall = "kaufland_integration.kaufland_integration.scheduler.kaufland.uninstall"
+after_uninstall = "kaufland_integration.kaufland_integration.scheduler.after_uninstall.uninstall"
 
 scheduler_events = {
 	# "all": [
@@ -27,7 +27,7 @@ scheduler_events = {
 	# 	"symfonia_integration.tasks.daily"
 	# ],
 	"hourly": [
-		"kaufland_integration.kaufland_integration.scheduler.kaufland.get_order"
+		"kaufland_integration.kaufland_integration.scheduler.kaufland.get_orders"
 	],
 	# "weekly": [
 	# 	"symfonia_integration.tasks.weekly"

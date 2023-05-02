@@ -6,8 +6,8 @@ import hashlib
 import urllib.parse
 import frappe
 from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
-from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext import order_exist
-from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async, set_job_for_order_async
+from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.customer import Customer
+from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async
 
 
 def get_headers(url: str, timestamp: int):
@@ -54,7 +54,6 @@ def get_orders_form_kaufland(dateFrom: str,log):
 
 #################################################################################################
 
-
 def get_order_form_kaufland_by_id(id_order: str, log):
     params = {'embedded': 'order_invoices'}
     uri = f'https://sellerapi.kaufland.com/v2/orders/{id_order}?{urllib.parse.urlencode(params)}'
@@ -65,8 +64,30 @@ def get_order_form_kaufland_by_id(id_order: str, log):
         add_comment_to_job(log, f"Order[{id_order}]: {str(data)}")
         if not order_exist(id_order, log):
             set_job_async(jobName=f"ErpNext.CreateNewSalesOrder",
-                          methodPath=f"kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.create_order_from_kaufland_data", queue="default", data=data["data"], log=log)
+                          methodPath=f"kaufland_integration.kaufland_integration.scheduler.Helper.orders.create_order_from_kaufland_data", queue="default", data=data["data"], log=log)
     else:
         add_comment_to_job(log, f"No data for order {id_order}")
 
 #################################################################################################
+
+def create_order_from_kaufland_data(data, log):
+    buyer = data["buyer"]
+
+    # create customer
+    customer = Customer()
+    if not customer.customer_exist(buyer["email"], log):
+        customer.create_customer(data, log)
+
+#################################################################################################
+
+def order_exist(id_order: str, log):
+    sales_order = frappe.db.get_value(
+        'Sales Order', {'po_no': id_order}, 'name')
+    if sales_order:
+        add_comment_to_job(
+            log, f"Sales Order {id_order} exists under the name {sales_order}.")
+        return True
+    else:
+        add_comment_to_job(
+            log, f"Sales Order {id_order} does not exist in ErpNext. Start creating new document...")
+        return False

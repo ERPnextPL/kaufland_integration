@@ -1,6 +1,5 @@
 import frappe
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job
-import gender_guesser.detector as gender
 from countryinfo import CountryInfo
 
 #################################################################################################
@@ -8,22 +7,17 @@ from countryinfo import CountryInfo
 
 def create_order_from_kaufland_data(data, log):
     buyer = data["buyer"]
-    biling_adrress = data["billing_address"]
-    shipping_address = data["shipping_address"]
 
     # create customer
     if not customer_exist(buyer["email"],log):
         create_customer(data,log)
 
     
-    # salutation = get_salutation(biling_adrress["first_name"],country)
-    # if not check_if_salutation_exist(salutation,log):
-    #     create_salutation(salutation)
 
 
 #################################################################################################
 
-def check_if_order_exist(id_order: str, log):
+def order_exist(id_order: str, log):
     sales_order = frappe.db.get_value(
         'Sales Order', {'po_no': id_order}, 'name')
     if sales_order:
@@ -46,40 +40,6 @@ def get_currency_by_code(contry_code):
         return str(currencyList[0]).upper()
     else:
         return str(currencyList).upper()
-
-
-def get_gender_by_name(name, contry_code):
-    return gender.Detector(case_sensitive=False).get_gender(name=name, country=get_contry_name_by_code(contry_code))
-
-
-def get_salutation(pname, pcountry):
-    match pcountry:
-        case "de":
-            match get_gender_by_name(pname, pcountry):
-                case "male":
-                    return "Herr"
-                case "female":
-                    return "Frau"
-                case _:
-                    return "unknown"
-        case "en":
-            match get_gender_by_name(pname, pcountry):
-                case "male":
-                    return "Mr"
-                case "female":
-                    return "Ms"
-                case _:
-                    return "unknown"
-
-
-def check_if_salutation_exist(salutation, log):
-    salut = frappe.db.get_value('Salutation', {'name': salutation}, 'name')
-    if salut:
-        return True
-    else:
-        add_comment_to_job(
-            log, f"Salutation '{salutation}' does not exist in ErpNext. Adding new salutation")
-        return False
 
 
 def customer_exist(customer_email, log):

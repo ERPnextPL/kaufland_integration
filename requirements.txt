@@ -1,4 +1,3 @@
 frappe
 erpnext
-gender-guesser
 countryinfo

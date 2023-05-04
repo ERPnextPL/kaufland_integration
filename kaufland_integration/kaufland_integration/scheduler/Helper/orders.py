@@ -9,7 +9,6 @@ from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.customer import Customer
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async
 
-
 def get_headers(url: str, timestamp: int):
     creditionals = KauflandCredentials()
     return {

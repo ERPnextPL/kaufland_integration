@@ -16,24 +16,37 @@ def delete_all_jobs():
     frappe.db.delete('Scheduled Job Type', {'name': 'kaufland.get_orders'})
     frappe.db.commit()
 
+def handle_error(error_message):
+    # user_ids = frappe.get_roles("Sales Manager")
+    user_ids = frappe.get_roles("Administrator")
+    for user_id in user_ids:
+        frappe.publish_realtime(event="msgprint", message=error_message, user=user_id)
+    pass
+
 
 def set_job_for_order_async(jobName: str, methodPath: str, queue: str, id: str, log):
-    frappe.enqueue(
-        job_name=jobName,
-        method=methodPath,
-        is_async=True,
-        queue=queue,
-        id_order=id,
-        log=log)
+    try:
+        frappe.enqueue(
+            job_name=jobName,
+            method=methodPath,
+            is_async=True,
+            queue=queue,
+            id_order=id,
+            log=log)
+    except Exception as e:
+        handle_error(str(e))
 
 def set_job_async(jobName: str, methodPath: str, queue: str, data,log):
-    frappe.enqueue(
-        job_name=jobName,
-        method=methodPath,
-        is_async=True,
-        queue=queue,
-        data=data,
-        log=log)
+    try:
+        frappe.enqueue(
+            job_name=jobName,
+            method=methodPath,
+            is_async=True,
+            queue=queue,
+            data=data,
+            log=log)
+    except Exception as e:
+        handle_error(str(e))
 
 
 def cancel_single_job(jobName: str, methodPath: str, queue: str):

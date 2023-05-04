@@ -6,6 +6,7 @@ import hashlib
 import urllib.parse
 import frappe
 from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
+from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.products import Products
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.customer import Customer
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async
 
@@ -72,11 +73,19 @@ def get_order_form_kaufland_by_id(id_order: str, log):
 def create_order_from_kaufland_data(data, log):
     buyer = data["buyer"]
 
-    # create customer
+    # customer section
     customer = Customer()
     if not customer.customer_exist(buyer["email"], log):
         customer.create_customer(data, log)
-
+    
+    # product section    
+    products = Products()    
+    order_items = data["order_units"]
+    for item in order_items:
+        product = item["product"]
+        if not products.product_exist(product,log):
+            products.create_product(product,log)
+        
 #################################################################################################
 
 def order_exist(id_order: str, log):

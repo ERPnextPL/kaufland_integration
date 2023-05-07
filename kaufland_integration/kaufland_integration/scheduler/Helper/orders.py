@@ -104,8 +104,8 @@ def create_order_from_kaufland_data(data, log):
     #first unit
     item = order_items[0]
     status_order = item["status"]
-    #Payment terms
 
+    #Payment terms
     payment = Payment()
 
     # order section
@@ -120,7 +120,7 @@ def create_order_from_kaufland_data(data, log):
             "selling_price_list": price_list,
             "currency": item["currency"],
             "orderstatus":status_orderm,
-            "payment_terms_template":payment.get_payment_terms()
+            "payment_terms_template":payment.getPaymentTemplate()
         })
         #order.insert()
 #################################################################################################

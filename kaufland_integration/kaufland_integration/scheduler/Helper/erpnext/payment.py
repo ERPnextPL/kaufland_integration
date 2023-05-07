@@ -18,7 +18,7 @@ class Payment:
         template.insert()
 
     def ifKauflandPaymentExist(self,log):
-        payment = frappe.db.get_value('Payment_Terms_Template',{'name': 'Kaufland.de'}, 'name')
+        payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
         if payment:
             return True
         else:

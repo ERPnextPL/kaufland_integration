@@ -17,16 +17,16 @@ class Payment:
         })
         template.insert()
 
-    def ifKauflandPaymentExist():
+    def ifKauflandPaymentExist(self,log):
         payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
         if payment:
             return True
         else:
-            add_comment_to_job(
-                log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
+          #  add_comment_to_job(
+            #    log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
             return False
     
-    def addKauflandPayments():
-        if ifKauflandPaymentExist():
-            createPaymentTempl()
+    def addKauflandPayments(self):
+        if self.ifKauflandPaymentExist():
+            self.createPaymentTempl()
 

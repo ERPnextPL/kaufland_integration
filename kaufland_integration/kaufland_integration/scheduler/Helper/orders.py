@@ -118,7 +118,6 @@ def create_order_from_kaufland_data(data, log):
             "transaction_date": po_date,
             "selling_price_list": selling.get_price_list(),
             "currency": item["currency"],
-            # "payment_terms_template":payment.getPaymentTemplate()
             "orderstatus":status_order,
             "items":sales_order_items,
             # "payment_terms_template":"",

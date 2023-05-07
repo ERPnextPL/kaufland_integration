@@ -5,14 +5,14 @@ class Selling:
     def __init__(self):
         self.selling = None
 
-    def kaufland_price_list_exist(self):
+    def __kaufland_price_list_exist(self):
         list = frappe.db.get_value('Price List', {'name': "Kaufland"}, 'name')
         if list:
             return True
         else:
             return False
 
-    def create_price_list(self):
+    def __create_price_list(self):
         price_list = frappe.get_doc({
             "doctype": "Price List",
             "name": "Kaufland",
@@ -23,3 +23,9 @@ class Selling:
         })
         price_list.insert()
         return price_list.name
+    
+    def get_price_list(self):
+        if not self.__kaufland_price_list_exist():
+            return str(self.__create_price_list())
+    
+ 

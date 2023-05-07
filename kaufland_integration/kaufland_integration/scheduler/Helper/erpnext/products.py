@@ -1,4 +1,5 @@
 import frappe
+from datetime import datetime
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job
 
 
@@ -52,3 +53,20 @@ class Products:
         })
         product.insert()
 
+    def get_sales_roder_item_structure(self,item,count):
+        product = item["product"]
+        eans = product["eans"]
+        date = item["delivery_time_expires_iso"]
+        datetime_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+        delivery_date  = datetime_obj.strftime("%d-%m-%Y")
+        price = int(item["price"])
+        price_decimal = price / 100
+        count += 1
+        return {
+            "doctype": "Sales Order Item",
+            "idx":str(count),
+            "item_code": eans[0],
+            "delivery_date ": delivery_date,
+            "qty": 1,
+            "rate": price_decimal
+        }

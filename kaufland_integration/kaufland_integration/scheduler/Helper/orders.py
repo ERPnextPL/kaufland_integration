@@ -84,8 +84,6 @@ def create_order_from_kaufland_data(data, log):
 
     # price list section
     selling = Selling()
-    if not selling.kaufland_price_list_exist():
-        price_list = selling.create_price_list()
     
     # customer section
     customer = Customer()
@@ -94,12 +92,14 @@ def create_order_from_kaufland_data(data, log):
 
     # product section
     products = Products()
+    sales_order_items = []
     order_items = data["order_units"]
     for item in order_items:
         product = item["product"]
         if not products.product_exist(product, log):
             products.create_product(product, log)
-
+        else:
+            sales_order_items.append(products.get_sales_roder_item_structure(item,len(sales_order_items)))
     #first unit
     item = order_items[0]
     status_order = item["status"]
@@ -113,11 +113,23 @@ def create_order_from_kaufland_data(data, log):
             "po_no": id_order,
             "po_date": po_date,
             "transaction_date": po_date,
-            "selling_price_list": price_list,
+            "selling_price_list": selling.get_price_list(),
             "currency": item["currency"],
-            "orderstatus":status_order
+            "orderstatus":status_order,
+            "items":sales_order_items,
+            # "payment_terms_template":"",
+            # "payment_schedule":[{
+            #     "idx": 1,
+            #     "due_date":"",
+            #     "invoice_portion":100.0,
+            #     "paid_amount":"",
+            #     "payment_amount":"",
+            #     "doctype":"Payment Schedule",
+            #     "docstatus": 1,
+            #     "payment_term":"",
+            # }]
         })
-        #order.insert()
+        order.insert()
 #################################################################################################
 
 

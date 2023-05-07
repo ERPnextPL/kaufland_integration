@@ -9,6 +9,7 @@ from datetime import datetime
 from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.selling import Selling
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.products import Products
+from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.payment import Payment
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.customer import Customer
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async
 
@@ -102,6 +103,9 @@ def create_order_from_kaufland_data(data, log):
     #first unit
     item = order_items[0]
     status_order = item["status"]
+
+    #Payment terms
+    payment = Payment()
 
     # order section
     if customer_name is not None:

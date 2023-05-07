@@ -115,9 +115,11 @@ class Customer:
                         self.__create_country(country_name, country_code)
                     if not self.__address_exist(address_title, "Shipping", log):
                         self.__create_address(shipping_address, "Shipping", country_name, country_code, "", customer)
+                
+                return str(customer.name)
             else:
                 add_comment_to_job(log, f"Customer '{customer.name}' does not exist in ErpNext. Insert Error...")
-                
+                return None                
 
     def __create_address(self,addressData, address_type, country_name, country_code, email, customer):
 

@@ -13,7 +13,7 @@ class Payment:
         template = frappe.get_doc({ 
             "doctype": "Payment Terms Template",
             "template_name": "Kaufland.de",
-            "allocate_payment_based_on_payment_terms":"100.0",
+            "allocate_payment_based_on_payment_terms":"100",
             "terms":[{"Portal payment"}]
         })
         template.insert()
@@ -21,8 +21,9 @@ class Payment:
         term = frappe.get_doc({ 
             "doctype": "Payment Term",
             "payment_term_name": 'Portal payment',
-            "invoice_portion":"100.0",
-            "mode_of_payment":"Przelew"
+            "invoice_portion":"100",
+            "mode_of_payment":"Przelew",
+            "description":"Płatności dokonane przez portale aukcyjne"   #todo dodać translacje
         })
         term.insert()
 

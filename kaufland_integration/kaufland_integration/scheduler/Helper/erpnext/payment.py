@@ -12,15 +12,17 @@ class Payment:
     def createPaymentTempl(self):
         template = frappe.get_doc({ 
             "doctype": "Payment Terms Template",
-            "template_name": 'Kaufland.de',
-            "allocate_payment_based_on_payment_terms":'100'
+            "template_name": "Kaufland.de",
+            "allocate_payment_based_on_payment_terms":"100.0",
+            "terms":["Portal payment"]
         })
         template.insert()
     def createPaymentTerm(self):
         term = frappe.get_doc({ 
             "doctype": "Payment Term",
             "payment_term_name": 'Portal payment',
-            "invoice_portion":"100"
+            "invoice_portion":"100.0",
+            "mode_of_payment":"Przelew"
         })
         term.insert()
 
@@ -41,8 +43,8 @@ class Payment:
            return True
     
     def addKauflandPayments(self):
-        # if self.ifAddPortalPaymentTerm():
-        self.createPaymentTerm() 
+        if self.ifAddPortalPaymentTerm():
+            self.createPaymentTerm() 
         # if not self.ifAddKauflandPayment() :
         self.createPaymentTempl()
 

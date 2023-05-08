@@ -41,8 +41,8 @@ class Payment:
            return True
     
     def addKauflandPayments(self):
-        if self.ifAddPortalPaymentTerm():
-           self.createPaymentTerm() 
-        if not self.ifAddKauflandPayment() :
-            self.createPaymentTempl()
+        # if self.ifAddPortalPaymentTerm():
+        self.createPaymentTerm() 
+        # if not self.ifAddKauflandPayment() :
+        self.createPaymentTempl()
 

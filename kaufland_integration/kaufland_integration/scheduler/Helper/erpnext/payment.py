@@ -14,7 +14,7 @@ class Payment:
             "doctype": "Payment Terms Template",
             "template_name": "Kaufland.de",
             "allocate_payment_based_on_payment_terms":"100.0",
-            "terms":["Portal payment"]
+            "terms":[{"Portal payment"}]
         })
         template.insert()
     def createPaymentTerm(self):
@@ -46,5 +46,5 @@ class Payment:
         if self.ifAddPortalPaymentTerm():
             self.createPaymentTerm() 
         # if not self.ifAddKauflandPayment() :
-        self.createPaymentTempl()
+        # self.createPaymentTempl()
 

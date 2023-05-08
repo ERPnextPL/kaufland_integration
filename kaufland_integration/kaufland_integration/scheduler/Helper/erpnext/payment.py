@@ -16,16 +16,33 @@ class Payment:
             "allocate_payment_based_on_payment_terms":'100'
         })
         template.insert()
+    def createPaymentTerm(self):
+        term = frappe.get_doc({ 
+            "doctype": "Payment Term",
+            "payment_term_name": 'Portal payment',
+            "invoice_portion":"100"
+        })
+        term.insert()
 
-    def ifKauflandPaymentExist(self):
+    def ifAddKauflandPayment(self):
         payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
         if payment is not None:
-            return True
+            return False
         else:
         #    add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
-           return False
+           return True 
+           
+    def ifAddPortalPaymentTerm(self):
+        payment = frappe.db.get_value('Payment Term',{'name': 'Portal payment'}, 'name')
+        if payment is not None:
+            return False
+        else:
+        #    add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
+           return True
     
     def addKauflandPayments(self):
-        # if not self.ifKauflandPaymentExist() :
+        if self.ifAddPortalPaymentTerm():
+           self.createPaymentTerm() 
+        if not self.ifAddKauflandPayment() :
             self.createPaymentTempl()
 

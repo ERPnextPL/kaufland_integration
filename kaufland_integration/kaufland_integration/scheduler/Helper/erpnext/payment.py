@@ -13,7 +13,7 @@ class Payment:
     def createPaymentTempl(self,name):
         template = frappe.get_doc({ 
             "doctype": "Payment Terms Template ",
-            "name": name
+            "name": 'Kaufland.de'
         })
         template.insert()
 

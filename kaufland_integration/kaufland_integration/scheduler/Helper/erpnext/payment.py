@@ -5,7 +5,7 @@ from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_
 class Payment:
     def __init__(self, log):
         self.payment = None
-        self.log = log
+        # self.log = log
 
     def getPaymentTemplate():      
         return 'Kaufland.de'

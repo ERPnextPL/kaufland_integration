@@ -3,9 +3,8 @@ from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_
 
 
 class Payment:
-    def __init__(self,log):
+    def __init__(self):
         self.payment = None
-        self.log = log
 
     def getPaymentTemplate():      
         return 'Kaufland.de'
@@ -22,7 +21,7 @@ class Payment:
         if payment is not None:
             return True
         else:
-           add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
+        #    add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
            return False
     
     def addKauflandPayments(self):

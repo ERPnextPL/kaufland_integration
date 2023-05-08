@@ -3,7 +3,7 @@ from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_
 
 
 class Payment:
-    def __init__(self, log):
+    def __init__(self):
         self.payment = None
         # self.log = log
 

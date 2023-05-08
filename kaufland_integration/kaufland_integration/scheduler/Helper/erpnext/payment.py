@@ -10,14 +10,14 @@ class Payment:
     def getPaymentTemplate():      
         return 'Kaufland.de'
     
-    def createPaymentTempl(self,name):
+    def createPaymentTempl(self):
         template = frappe.get_doc({ 
             "doctype": "Payment Terms Template ",
             "name": 'Kaufland.de'
         })
         template.insert()
 
-    def ifKauflandPaymentExist(self,log):
+    def ifKauflandPaymentExist(self):
         payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
         if payment:
             return True

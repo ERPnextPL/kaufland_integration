@@ -3,9 +3,9 @@ from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_
 
 
 class Payment:
-    def __init__(self):
+    def __init__(self,log):
         self.payment = None
-        # self.log = log
+        self.log = log
 
     def getPaymentTemplate():      
         return 'Kaufland.de'
@@ -19,14 +19,13 @@ class Payment:
 
     def ifKauflandPaymentExist(self):
         payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
-        if payment:
+        if payment is not None:
             return True
         else:
-          #  add_comment_to_job(
-            #    log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
-            return False
+           add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
+           return False
     
     def addKauflandPayments(self):
-        if self.ifKauflandPaymentExist():
+        if not self.ifKauflandPaymentExist() :
             self.createPaymentTempl()
 

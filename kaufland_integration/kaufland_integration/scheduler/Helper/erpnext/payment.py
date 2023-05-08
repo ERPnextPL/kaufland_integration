@@ -6,7 +6,7 @@ class Payment:
     def __init__(self):
         self.payment = None
 
-    def getPaymentTemplate():      
+    def getPaymentTemplate(self):      
         return 'Kaufland.de'
     
     def createPaymentTempl(self):
@@ -32,20 +32,18 @@ class Payment:
         if payment is not None:
             return False
         else:
-        #    add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
-           return True 
+            return True 
            
     def ifAddPortalPaymentTerm(self):
         payment = frappe.db.get_value('Payment Term',{'name': 'Portal payment'}, 'name')
         if payment is not None:
             return False
         else:
-        #    add_comment_to_job( self.log, f"Payment: 'Kaufland.de' does not exist in ErpNext. Adding new Item")
-           return True
+            return True
     
     def addKauflandPayments(self):
         if self.ifAddPortalPaymentTerm():
             self.createPaymentTerm() 
-        # if not self.ifAddKauflandPayment() :
-        # self.createPaymentTempl()
+        # if self.ifAddKauflandPayment():
+        #     self.createPaymentTempl()
 

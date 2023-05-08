@@ -89,13 +89,20 @@ def create_order_from_kaufland_data(data, log):
     customer = Customer()
     if not customer.customer_exist(buyer["email"], log):
        customer_name = customer.create_customer(data, log)
+    else:
+        customer_name = customer.get_customer_name(buyer["email"])
+ 
 
     # product section
     products = Products()
     sales_order_items = []
     order_items = data["order_units"]
+    sum = 0
     for item in order_items:
         product = item["product"]
+        price = int(item["price"])
+        price_decimal = price / 100
+        sum = sum + price_decimal
         if not products.product_exist(product, log):
             products.create_product(product, log)
         else:
@@ -118,21 +125,23 @@ def create_order_from_kaufland_data(data, log):
             "transaction_date": po_date,
             "selling_price_list": selling.get_price_list(),
             "currency": item["currency"],
+            "conversion_rate": 4.5,
             "orderstatus":status_order,
             "items":sales_order_items,
-            # "payment_terms_template":"",
-            # "payment_schedule":[{
-            #     "idx": 1,
-            #     "due_date":"",
-            #     "invoice_portion":100.0,
-            #     "paid_amount":"",
-            #     "payment_amount":"",
-            #     "doctype":"Payment Schedule",
-            #     "docstatus": 1,
-            #     "payment_term":"",
-            # }]
+            "payment_schedule":[{
+                "idx": 1,
+                "due_date":po_date,
+                "invoice_portion":100.0,
+                # "paid_amount":sum,
+                # "payment_amount":sum,
+                "doctype":"Payment Schedule",
+            }]
         })
-        order.insert()
+        
+        data_string = frappe.as_json(order)
+        add_comment_to_job(log, f"TEST: {data_string}")
+
+        #order.insert()
 #################################################################################################
 
 

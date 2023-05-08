@@ -26,6 +26,13 @@ class Customer:
         else:
             add_comment_to_job(log, f"Customer '{customer_email}' does not exist in ErpNext. Adding new Customer")
             return False
+        
+    def get_customer_name(self,customer_email):
+        customer = frappe.db.get_value('Customer', {'email_id': customer_email}, 'name')
+        if customer is not None:
+            return customer
+        else:
+            return None
 
     def __contact_exist(self,contact_email):
         contact_email = frappe.db.get_value('Contact', {'email_id': contact_email}, 'name')

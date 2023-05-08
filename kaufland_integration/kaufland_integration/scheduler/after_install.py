@@ -3,4 +3,4 @@ from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.payment 
 
 def install():
     payment = Payment()
- #   payment.addKauflandPayments()
+    payment.addKauflandPayments()

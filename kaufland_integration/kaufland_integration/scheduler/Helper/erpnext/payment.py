@@ -25,6 +25,6 @@ class Payment:
            return False
     
     def addKauflandPayments(self):
-        if not self.ifKauflandPaymentExist() :
+        # if not self.ifKauflandPaymentExist() :
             self.createPaymentTempl()
 

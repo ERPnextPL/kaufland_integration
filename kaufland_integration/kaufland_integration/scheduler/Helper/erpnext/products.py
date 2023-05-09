@@ -35,6 +35,13 @@ class Products:
     def create_product(self, item, log):
         eans = item["eans"]
         
+        name_length = len(item["title"])
+        title = item["title"]
+        if name_length > 140:
+            name = title[:140]
+        else:
+            name = title
+            
         if not self.__brand_exist(item["manufacturer"]):
            self.__create_brand(item["manufacturer"])
         
@@ -42,7 +49,7 @@ class Products:
             "doctype": "Item",
             "item_code": eans[0],
             "item_group": "Produkty",
-            "item_name": item["title"],
+            "item_name": name,
             "brand": item["manufacturer"],
             "stock_uom": "szt.",
             "is_purchase_item": 1,
@@ -54,18 +61,24 @@ class Products:
         product.insert()
 
     def get_sales_roder_item_structure(self,item,count):
+        
         product = item["product"]
-        eans = product["eans"]
+        ean = product["eans"][0]
+        
         date = item["delivery_time_expires_iso"]
         datetime_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
         delivery_date = datetime_obj.strftime("%Y-%m-%d")
-        price = int(item["price"])
-        price_decimal = price / 100
+        
+        if item["price"] is not None:
+            price = item["price"]
+            price_decimal = price / 100
+            
         count += 1
+        
         return {
             "doctype": "Sales Order Item",
             "idx":str(count),
-            "item_code": eans[0],
+            "item_code": ean,
             "delivery_date": delivery_date,
             "qty": 1,
             "rate": price_decimal

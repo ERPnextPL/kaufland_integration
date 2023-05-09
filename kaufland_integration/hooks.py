@@ -11,7 +11,7 @@ app_license = "MIT"
 # ------------
 
 # before_install = "kaufland_integration.install.before_install"
-# after_install = "kaufland_integration.kaufland_integration.scheduler.after_install.install"
+after_install = "kaufland_integration.kaufland_integration.scheduler.after_install.install"
 
 # Uninstallation
 # ------------

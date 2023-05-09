@@ -58,7 +58,7 @@ class Products:
         eans = product["eans"]
         date = item["delivery_time_expires_iso"]
         datetime_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
-        delivery_date  = datetime_obj.strftime("%d-%m-%Y")
+        delivery_date = datetime_obj.strftime("%Y-%m-%d")
         price = int(item["price"])
         price_decimal = price / 100
         count += 1
@@ -66,7 +66,7 @@ class Products:
             "doctype": "Sales Order Item",
             "idx":str(count),
             "item_code": eans[0],
-            "delivery_date ": delivery_date,
+            "delivery_date": delivery_date,
             "qty": 1,
             "rate": price_decimal
         }

@@ -6,17 +6,9 @@ class Payment:
     def __init__(self):
         self.payment = None
 
-    def getPaymentTemplate(self):      
-        return 'Kaufland.de'
+    def getPaymentTerm(self):      
+        return "Portal payment"
     
-    def createPaymentTempl(self):
-        template = frappe.get_doc({ 
-            "doctype": "Payment Terms Template",
-            "template_name": "Kaufland.de",
-            "allocate_payment_based_on_payment_terms":"100",
-            "terms":[{"Portal payment"}]
-        })
-        template.insert()
     def createPaymentTerm(self):
         term = frappe.get_doc({ 
             "doctype": "Payment Term",
@@ -27,12 +19,6 @@ class Payment:
         })
         term.insert()
 
-    def ifAddKauflandPayment(self):
-        payment = frappe.db.get_value('Payment Terms Template',{'name': 'Kaufland.de'}, 'name')
-        if payment is not None:
-            return False
-        else:
-            return True 
            
     def ifAddPortalPaymentTerm(self):
         payment = frappe.db.get_value('Payment Term',{'name': 'Portal payment'}, 'name')
@@ -44,6 +30,7 @@ class Payment:
     def addKauflandPayments(self):
         if self.ifAddPortalPaymentTerm():
             self.createPaymentTerm() 
-        # if self.ifAddKauflandPayment():
-        #     self.createPaymentTempl()
 
+    def deletePaymentTerm(self):
+        frappe.delete_doc("Payment Term", 'Portal payment')
+        frappe.db.commit()

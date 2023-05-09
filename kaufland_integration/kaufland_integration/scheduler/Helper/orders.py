@@ -80,7 +80,7 @@ def create_order_from_kaufland_data(data, log):
     id_order = data["id_order"]
     date = data["ts_created_iso"]
     datetime_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
-    po_date = datetime_obj.strftime("%d-%m-%Y")
+    po_date = datetime_obj.strftime("%Y-%m-%d")
 
     # price list section
     selling = Selling()
@@ -132,16 +132,15 @@ def create_order_from_kaufland_data(data, log):
                 "idx": 1,
                 "due_date":po_date,
                 "invoice_portion":100.0,
-                # "paid_amount":sum,
-                # "payment_amount":sum,
+                "payment_term": payment.getPaymentTerm(),
                 "doctype":"Payment Schedule",
             }]
         })
         
-        data_string = frappe.as_json(order)
-        add_comment_to_job(log, f"TEST: {data_string}")
+        # data_string = frappe.as_json(order)
+        # add_comment_to_job(log, f"TEST: {data_string}")
 
-        #order.insert()
+        order.insert()
 #################################################################################################
 
 

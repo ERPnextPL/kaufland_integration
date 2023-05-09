@@ -36,8 +36,8 @@ class Payment:
             frappe.delete_doc("Payment Term", 'Portal payment')
             frappe.db.commit()
         except frappe.DoesNotExistError:
-            print(f"Document 'Portal payment' does not exist.")
+            print(f"* Document 'Portal payment' does not exist.")
         except frappe.LinkExistsError:
-            print(f"Cannot delete Payment Term 'Portal payment' as it has existing links.")
+            print(f"* Cannot delete Payment Term 'Portal payment' as it has existing links.")
         except frappe.PermissionError:
-            print("You do not have the necessary permissions to delete the document.")
+            print(f"* You do not have the necessary permissions to delete the document.")

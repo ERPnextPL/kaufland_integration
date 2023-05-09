@@ -7,11 +7,13 @@ import urllib.parse
 import frappe
 from datetime import datetime
 from kaufland_integration.kaufland_integration.doctype.kaufland_setings.kaufland_setings import KauflandCredentials
+from kaufland_integration.kaufland_integration.scheduler.Helper.exchange_rates import ExchangeRates
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.selling import Selling
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.products import Products
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.payment import Payment
 from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.customer import Customer
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job, set_job_async
+
 
 def get_headers(url: str, timestamp: int):
     creditionals = KauflandCredentials()
@@ -84,63 +86,66 @@ def create_order_from_kaufland_data(data, log):
 
     # price list section
     selling = Selling()
-    
+
     # customer section
     customer = Customer()
     if not customer.customer_exist(buyer["email"], log):
-       customer_name = customer.create_customer(data, log)
+        customer_name = customer.create_customer(data, log)
     else:
         customer_name = customer.get_customer_name(buyer["email"])
- 
-
+    
     # product section
     products = Products()
     sales_order_items = []
     order_items = data["order_units"]
-    sum = 0
     for item in order_items:
         product = item["product"]
-        price = int(item["price"])
-        price_decimal = price / 100
-        sum = sum + price_decimal
         if not products.product_exist(product, log):
             products.create_product(product, log)
         else:
-            sales_order_items.append(products.get_sales_roder_item_structure(item,len(sales_order_items)))
-    #first unit
-    item = order_items[0]
-    status_order = item["status"]
+            sales_order_items.append(
+                products.get_sales_roder_item_structure(item, len(sales_order_items)))
+    
+    # first unit
+    status_order = order_items[0]["status"]
 
-    #Payment terms
+    # Payment terms
     payment = Payment()
 
+    # Exchange Rates
+    exchange_rates = ExchangeRates()
+    eur = exchange_rates.get_currancy_rate(order_items[0]["currency"])
+    
     # order section
-    if customer_name is not None:
-        order = frappe.get_doc({
-            "doctype": 'Sales Order',
-            "customer": customer_name,
-            "order_type": "Sales",
-            "po_no": id_order,
-            "po_date": po_date,
-            "transaction_date": po_date,
-            "selling_price_list": selling.get_price_list(),
-            "currency": item["currency"],
-            "conversion_rate": 4.5,
-            "orderstatus":status_order,
-            "items":sales_order_items,
-            "payment_schedule":[{
-                "idx": 1,
-                "due_date":po_date,
-                "invoice_portion":100.0,
-                "payment_term": payment.getPaymentTerm(),
-                "doctype":"Payment Schedule",
-            }]
-        })
-        
-        # data_string = frappe.as_json(order)
-        # add_comment_to_job(log, f"TEST: {data_string}")
-
+    order = frappe.get_doc({
+        "doctype": 'Sales Order',
+        "naming_series": "SO-KAUF-.YYYY.-",
+        "customer": customer_name,
+        "order_type": "Sales",
+        "po_no": id_order,
+        "po_date": po_date,
+        "transaction_date": po_date,
+        "selling_price_list": selling.get_price_list(),
+        "currency": order_items[0]["currency"],
+        "conversion_rate": eur,
+        "orderstatus": status_order,
+        "items": sales_order_items,
+        "payment_schedule": [{
+            "idx": 1,
+            "due_date": po_date,
+            "invoice_portion": 100.0,
+            "payment_term": payment.getPaymentTerm(),
+            "doctype": "Payment Schedule",
+        }]
+    })
+    
+    try:
         order.insert()
+        add_comment_to_job(log, f"Sales order [{id_order}] added to {order.name}")
+    except Exception as e:
+        data_string = frappe.as_json(order)
+        add_comment_to_job(log, f"Something went wrong: {e}, insert data: {data_string}")
+
 #################################################################################################
 
 

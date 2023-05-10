@@ -36,7 +36,7 @@ def sign_request(method, uri, body, timestamp, secret_key):
 
 def get_orders_form_kaufland(dateFrom: str, log):
 
-    params = {'storefront': 'de', 'fulfillment_type': 'fulfilled_by_merchant',
+    params = { 'fulfillment_type': 'fulfilled_by_merchant',
               'ts_created_from_iso': dateFrom}
     uri = f'https://sellerapi.kaufland.com/v2/orders?{urllib.parse.urlencode(params)}'
     timestamp = int(time.time())
@@ -102,9 +102,7 @@ def create_order_from_kaufland_data(data, log):
         product = item["product"]
         if not products.product_exist(product, log):
             products.create_product(product, log)
-        else:
-            sales_order_items.append(
-                products.get_sales_roder_item_structure(item, len(sales_order_items)))
+        sales_order_items.append(products.get_sales_roder_item_structure(item, len(sales_order_items)))
     
     # first unit
     status_order = order_items[0]["status"]

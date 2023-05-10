@@ -27,5 +27,7 @@ class Selling:
     def get_price_list(self):
         if not self.__kaufland_price_list_exist():
             return str(self.__create_price_list())
+        else:
+            return "Kaufland"
     
  

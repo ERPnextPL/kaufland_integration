@@ -7,22 +7,42 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "credentials",
   "key",
-  "secret_key"
+  "secret_key",
+  "options",
+  "number_of_days_back"
  ],
  "fields": [
   {
    "fieldname": "key",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "key",
+   "label": "Key",
    "reqd": 1
   },
   {
    "fieldname": "secret_key",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "secret_key",
+   "label": "Secret key",
+   "reqd": 1
+  },
+  {
+   "fieldname": "credentials",
+   "fieldtype": "Section Break",
+   "label": "Credentials"
+  },
+  {
+   "fieldname": "options",
+   "fieldtype": "Section Break",
+   "label": "Options"
+  },
+  {
+   "default": "0",
+   "fieldname": "number_of_days_back",
+   "fieldtype": "Int",
+   "label": "Number of days back",
    "reqd": 1
   }
  ],
@@ -30,7 +50,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-25 19:45:10.722982",
+ "modified": "2023-05-29 21:59:11.558629",
  "modified_by": "Administrator",
  "module": "Kaufland Integration",
  "name": "Kaufland Setings",

@@ -15,7 +15,12 @@ class KauflandCredentials:
     def __get_secret(self):
         return frappe.get_doc("Kaufland Setings", "api").secret_key
 
+class KauflandSettingsOptions:
+    def __init__(self):
+        self.number_of_days_back = self.__get_number_of_days_back()
 
+    def __get_number_of_days_back(self) -> int:
+        return frappe.get_doc("Kaufland Setings", "api").number_of_days_back
 
 class KauflandSetings(Document):
 	pass

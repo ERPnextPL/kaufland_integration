@@ -137,12 +137,16 @@ class Customer:
 
         if address_type == "Billing":
             primary = 1
-            if self.__get_customer_type(addressData["company_name"]) == "Company":
-                is_company_address = 1
-                title = addressData["company_name"]
-            else:
-                is_company_address = 0
-                title = addressData["first_name"] + " " + addressData["last_name"]
+            #
+            # no definition of the structure for the company
+            #
+            # if self.__get_customer_type(addressData["company_name"]) == "Company":
+            #     is_company_address = 1
+            #     title = addressData["company_name"]
+            # else:
+            #   is_company_address = 0
+            #   title = addressData["first_name"] + " " + addressData["last_name"]
+            title = addressData["first_name"] + " " + addressData["last_name"]
         elif address_type == "Shipping":
             shipping = 1
             title = addressData["first_name"] + " " + addressData["last_name"]

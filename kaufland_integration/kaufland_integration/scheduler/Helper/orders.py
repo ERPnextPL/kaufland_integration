@@ -37,7 +37,7 @@ def sign_request(method, uri, body, timestamp, secret_key):
 def get_orders_form_kaufland(dateFrom: str, log):
 
     params = { 'fulfillment_type': 'fulfilled_by_merchant',
-              'ts_created_from_iso': dateFrom}
+              'ts_created_from_iso': dateFrom,'limit':100}
     uri = f'https://sellerapi.kaufland.com/v2/orders?{urllib.parse.urlencode(params)}'
     timestamp = int(time.time())
     try:

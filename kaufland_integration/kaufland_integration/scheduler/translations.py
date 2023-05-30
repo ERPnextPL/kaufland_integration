@@ -8,12 +8,16 @@ class translations:
             translation = frappe.new_doc("Translation")
             translation.update(items)
             translation.insert()
+        print(f"* All Translations installed for PL")
+
             
     def delete_translations(self, translations_list):
         for items in translations_list:
             translation = frappe.get_doc("Translation",items)
             frappe.db.delete("Translation", translation.name)
         frappe.clear_cache()
+        print(f"* All Translations deleted")
+
             
     def get_translation_list(self):
         return [

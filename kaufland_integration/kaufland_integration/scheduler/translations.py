@@ -30,5 +30,10 @@ class translations:
                 "source_text": "Number of days back",
                 "language": "pl",
                 "translated_text": "Liczba dni wstecz"
+            },
+            {
+                "source_text": "Kaufland Settings",
+                "language": "pl",
+                "translated_text": "Ustawienia Kaufland"
             }
         ]

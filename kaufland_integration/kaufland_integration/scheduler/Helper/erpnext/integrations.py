@@ -3,38 +3,54 @@ import frappe
 from frappe.desk.moduleview import get, get_doctype_info, get_links_for_module
 
 
-def add_link_to_erpnext_integrations():
-    workspace = frappe.get_doc("Workspace", {"name": "ERPNext Integrations"})
-    print(workspace)
-    workspace_links = workspace.get("links") or []
-    print(workspace_links)
-    # new_link = {
-    #     "hidden": 0,
-    #     "is_query_report": 0,
-    #     "label": "Kaufland Settings",
-    #     "link_count": 0,
-    #     "link_to": "Kaufland Setings",
-    #     "link_type": "DocType",
-    #     "onboard": 0,
-    #     "type": "Link"
-    # }
 
-    # workspace_links.append(new_link)
-    # workspace.set("links", workspace_links)
-    # workspace.save()
 
 
 class Integration:
     def __init__(self):
         pass
 
-    def get_links(self):
-        pass
-        # try:
-        #     links = get_links_for_module("ERPNext", "ERPNext Integrations")
-        #     info = get("ERPNext Integrations")
-        #     print(info)
-        #     add_link_to_erpnext_integrations()
+    def add_links(self):
+        try:
+            self.__add_link_to_erpnext_integrations()
+            print(f"* Adding link to ERPNext Integrations")
+        except Exception as e:
+            print(e)
 
-        # except Exception as e:
-        #     print(e)
+    def delete_links(self):
+        try:
+            self.__dellete_link_from_erpnext_integrations()
+            print(f"* Deleting link from ERPNext Integrations")
+        except Exception as e:
+            print(e)
+
+    def __add_link_to_erpnext_integrations(self):
+        workspace = frappe.get_doc("Workspace", {"name": "ERPNext Integrations"})
+        workspace_links = workspace.get("links") or []
+        new_link = {
+            "hidden": 0,
+            "is_query_report": 0,
+            "label": "Kaufland Settings",
+            "link_count": 0,
+            "link_to": "Kaufland Setings",
+            "link_type": "DocType",
+            "onboard": 0,
+            "type": "Link"
+        }
+        for index, link in enumerate(workspace_links, start=1):
+            if link.get("label") == "Settings":
+               workspace_links.insert(index,new_link)
+        workspace.set("links", workspace_links)
+        workspace.save()
+        frappe.db.commit()
+
+    def __dellete_link_from_erpnext_integrations(self):
+        workspace = frappe.get_doc("Workspace", {"name": "ERPNext Integrations"})
+        workspace_links = workspace.get("links") or []
+        for link in workspace_links:
+            if link.get("label") == "Kaufland Settings":
+                workspace.links.remove(link)
+                break
+
+        workspace.save()
+        frappe.db.commit()

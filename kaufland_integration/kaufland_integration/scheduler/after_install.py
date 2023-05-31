@@ -12,4 +12,4 @@ def install():
     translationsObj.add_translations(translationsObj.get_translation_list())
 
     integrations = Integration()
-    integrations.get_links()
+    integrations.add_links()

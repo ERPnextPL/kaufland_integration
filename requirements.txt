@@ -1,4 +1,4 @@
-frappe==v14.37.0
-erpnext==v14.26.0
+frappe
+erpnext
 payments
 countryinfo

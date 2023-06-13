@@ -158,7 +158,6 @@ class Customer:
             "address_line1": addressData["street"],
             "address_line2": addressData["house_number"],
             "city": addressData["city"],
-            "county": country_code,
             "country": country_name,
             "pincode": addressData["postcode"],
             "email_id": email,
@@ -187,6 +186,7 @@ class Customer:
                 customer.email_id = contact.email_id
             customer.save()
 
+
     def __create_contact(self,data, customer):
         splited_name = data.address_title.split()
 
@@ -195,6 +195,7 @@ class Customer:
             "first_name": splited_name[0],
             "last_name": splited_name[1],
             "phone": data.phone,
+            "is_primary_contact": 1,
             "email_ids": [
                 {
                     "email_id": data.email_id,

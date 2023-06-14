@@ -33,6 +33,31 @@ class Customer:
             return customer
         else:
             return None
+        
+    def get_customer_primary_address_text(self,name):
+        customer_address = frappe.db.get_value('Customer', {'name': name}, 'primary_address')
+        if customer_address is not None:
+            return customer_address
+        else:
+            return None
+    
+    def get_customer_shipping_address_text(self,name):
+        customer_name = frappe.db.get_value('Customer', {'name': name}, 'customer_name')
+        if customer_name is not None:
+            address = frappe.get_doc("Address", customer_name+"-Shipping")
+            if address:
+                return f"{address.address_line1} {address.address_line2}<br>{address.pincode} {address.city}<br>\n{address.country}"
+            else:
+                return None
+        else:
+            return None
+        
+    def get_customer_territory(self,name):
+        customer_territory = frappe.db.get_value('Customer', {'name': name}, 'territory')
+        if customer_territory is not None:
+            return customer_territory
+        else:
+            return None    
 
     def __contact_exist(self,contact_email):
         contact_email = frappe.db.get_value('Contact', {'email_id': contact_email}, 'name')

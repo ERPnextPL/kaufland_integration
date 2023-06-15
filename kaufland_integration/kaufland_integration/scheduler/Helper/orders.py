@@ -94,9 +94,6 @@ def create_order_from_kaufland_data(data, log):
     else:
         customer_name = customer.get_customer_name(buyer["email"])
         
-    primary_address = customer.get_customer_primary_address_text(customer_name)
-    shipping_address = customer.get_customer_shipping_address_text(customer_name)
-
     territory = customer.get_customer_territory(customer_name)
     
     # product section
@@ -124,8 +121,6 @@ def create_order_from_kaufland_data(data, log):
         "doctype": 'Sales Order',
         "naming_series": "SO-KAUF-.YYYY.-",
         "customer": customer_name,
-        # "address_display": primary_address,  # TODO poprawic foramt wyswietlania
-        # "shipping_address":shipping_address, # TODO poprawic foramt wyswietlania
         "territory":territory,
         "order_type": "Sales",
         "po_no": id_order,
@@ -146,7 +141,7 @@ def create_order_from_kaufland_data(data, log):
     })
     
     try:
-        order.insert()    
+        order.insert()  
         add_comment_to_job(log, f"Sales order [{id_order}] added to {order.name}")
     except Exception as e:
         data_string = frappe.as_json(order)

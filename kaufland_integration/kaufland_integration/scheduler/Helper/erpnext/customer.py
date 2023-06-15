@@ -46,7 +46,7 @@ class Customer:
         if customer_name is not None:
             address = frappe.get_doc("Address", customer_name+"-Shipping")
             if address:
-                return f"{address.address_line1} {address.address_line2}<br>{address.pincode} {address.city}<br>\n{address.country}"
+                return f"{address.address_line1} {address.address_line2 if address.address_line2 else ''}<br>{address.pincode} {address.city}<br>{address.country}"
             else:
                 return None
         else:
@@ -180,8 +180,8 @@ class Customer:
             "doctype": "Address",
             "address_title": title,
             "address_type": address_type,
-            "address_line1": addressData["street"],
-            "address_line2": addressData["house_number"],
+            "address_line1": addressData["street"] + " "+ addressData["house_number"],
+            "address_line2": "",
             "city": addressData["city"],
             "country": country_name,
             "pincode": addressData["postcode"],
@@ -203,7 +203,7 @@ class Customer:
             if not self.__contact_exist(email):
                 contact = self.__create_contact(address, customer)
 
-            primary_address = f"{address.address_line1} {address.address_line2}<br>{address.pincode} {address.city}<br>\n{address.country}"
+            primary_address = f"{address.address_line1} {address.address_line2 if address.address_line2 else ''}<br>{address.pincode} {address.city}<br>{address.country}"
             customer.primary_address = primary_address
             customer.customer_primary_address = address.name
             if contact is not None:

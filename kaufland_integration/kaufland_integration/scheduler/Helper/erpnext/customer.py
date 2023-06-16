@@ -1,4 +1,5 @@
 import frappe
+from kaufland_integration.kaufland_integration.scheduler.Helper.erpnext.selling import Selling
 from kaufland_integration.kaufland_integration.scheduler.Helper.jobs import add_comment_to_job
 from countryinfo import CountryInfo
 
@@ -19,30 +20,35 @@ class Customer:
         else:
             return str(currencyList).upper()
 
-    def customer_exist(self,customer_email, log):
-        customer = frappe.db.get_value('Customer', {'email_id': customer_email}, 'name')
+    def customer_exist(self, customer_email, log):
+        customer = frappe.db.get_value(
+            'Customer', {'email_id': customer_email}, 'name')
         if customer:
             return True
         else:
-            add_comment_to_job(log, f"Customer '{customer_email}' does not exist in ErpNext. Adding new Customer")
+            add_comment_to_job(
+                log, f"Customer '{customer_email}' does not exist in ErpNext. Adding new Customer")
             return False
-        
-    def get_customer_name(self,customer_email):
-        customer = frappe.db.get_value('Customer', {'email_id': customer_email}, 'name')
+
+    def get_customer_name(self, customer_email):
+        customer = frappe.db.get_value(
+            'Customer', {'email_id': customer_email}, 'name')
         if customer is not None:
             return customer
         else:
             return None
-        
-    def get_customer_primary_address_text(self,name):
-        customer_address = frappe.db.get_value('Customer', {'name': name}, 'primary_address')
+
+    def get_customer_primary_address_text(self, name):
+        customer_address = frappe.db.get_value(
+            'Customer', {'name': name}, 'primary_address')
         if customer_address is not None:
             return customer_address
         else:
             return None
-    
-    def get_customer_shipping_address_text(self,name):
-        customer_name = frappe.db.get_value('Customer', {'name': name}, 'customer_name')
+
+    def get_customer_shipping_address_text(self, name):
+        customer_name = frappe.db.get_value(
+            'Customer', {'name': name}, 'customer_name')
         if customer_name is not None:
             address = frappe.get_doc("Address", customer_name+"-Shipping")
             if address:
@@ -51,62 +57,73 @@ class Customer:
                 return None
         else:
             return None
-        
-    def get_customer_territory(self,name):
-        customer_territory = frappe.db.get_value('Customer', {'name': name}, 'territory')
+
+    def get_customer_territory(self, name):
+        customer_territory = frappe.db.get_value(
+            'Customer', {'name': name}, 'territory')
         if customer_territory is not None:
             return customer_territory
         else:
-            return None    
+            return None
 
-    def __contact_exist(self,contact_email):
-        contact_email = frappe.db.get_value('Contact', {'email_id': contact_email}, 'name')
+    def __contact_exist(self, contact_email):
+        contact_email = frappe.db.get_value(
+            'Contact', {'email_id': contact_email}, 'name')
         if contact_email:
             return True
         else:
             return False
 
-    def __country_exist(self,coutry_name, log):
+    def __country_exist(self, coutry_name, log):
         country = frappe.db.get_value('Country', {'name': coutry_name}, 'name')
         if country:
             return True
         else:
-            add_comment_to_job( log, f"Country '{coutry_name}' does not exist in ErpNext. Adding new country")
+            add_comment_to_job(
+                log, f"Country '{coutry_name}' does not exist in ErpNext. Adding new country")
             return False
 
-    def __get_territory(self,country_name):
-        territory = frappe.db.get_value('Territory', {'name': country_name}, 'name')
+    def __get_territory(self, country_name):
+        territory = frappe.db.get_value(
+            'Territory', {'name': country_name}, 'name')
         if territory is not None:
             return str(territory)
         else:
-            territory = frappe.get_doc({ "doctype": "Territory", "territory_name": country_name })
+            territory = frappe.get_doc(
+                {"doctype": "Territory", "territory_name": country_name})
             territory.insert()
             return str(territory.name)
 
     def __get_customer_group(self):
-        customer_group = frappe.db.get_value('Customer Group', {'name': 'Kaufland.de'}, 'name')
+        customer_group = frappe.db.get_value(
+            'Customer Group', {'name': 'Kaufland.de'}, 'name')
         if customer_group is not None:
             return str(customer_group)
         else:
-            group = frappe.get_doc({ "doctype": "Customer Group", "name": "Kaufland.de", "customer_group_name": "Kaufland.de" })
+            group = frappe.get_doc(
+                {"doctype": "Customer Group", "name": "Kaufland.de", "customer_group_name": "Kaufland.de"})
             group.insert()
             return str(group.name)
 
-    def __get_customer_type(self,company_name):
+    def __get_customer_type(self, company_name):
         if company_name == '' or company_name is None:
             return "Individual"
         else:
             return "Company"
 
-    def __address_exist(self,address_id, address_type, log):
-        address = frappe.db.get_value('Address', {'address_title': address_id, "address_type": address_type}, 'name')
+    def __address_exist(self, address_id, address_type, log):
+        address = frappe.db.get_value(
+            'Address', {'address_title': address_id, "address_type": address_type}, 'name')
         if address:
             return True
         else:
-            add_comment_to_job(log, f"{address_type} address '{address_id}' does not exist in ErpNext. Adding new address")
+            add_comment_to_job(
+                log, f"{address_type} address '{address_id}' does not exist in ErpNext. Adding new address")
             return False
 
-    def create_customer(self,data, log):
+    def create_customer(self, data, log):
+        selling = Selling()
+
         buyer = data["buyer"]
         biling_adrress = data["billing_address"]
         shipping_address = data["shipping_address"]
@@ -122,6 +139,7 @@ class Customer:
                 "email_id": buyer["email"],
                 "language": country_code,
                 "default_currency": country_currency,
+                "default_price_list": selling.get_price_list(),
                 "customer_type": self.__get_customer_type(biling_adrress["company_name"]),
                 "customer_group": self.__get_customer_group(),
                 "territory": self.__get_territory(self.__get_contry_name_by_code(country_code))
@@ -133,27 +151,32 @@ class Customer:
                 if biling_adrress is not None:
                     country_code = str(biling_adrress["country"]).lower()
                     country_name = self.__get_contry_name_by_code(country_code)
-                    address_title = biling_adrress["first_name"] + " " + biling_adrress["last_name"]
+                    address_title = biling_adrress["first_name"] + \
+                        " " + biling_adrress["last_name"]
                     if not self.__country_exist(country_name, log):
                         self.__create_country(country_name, country_code)
                     if not self.__address_exist(address_title, "Billing", log):
-                        self.__create_address(biling_adrress, "Billing", country_name, country_code, buyer["email"], customer)
+                        self.__create_address(
+                            biling_adrress, "Billing", country_name, country_code, buyer["email"], customer)
 
                 if shipping_address is not None:
                     country_code = str(shipping_address["country"]).lower()
                     country_name = self.__get_contry_name_by_code(country_code)
-                    address_title = shipping_address["first_name"] + " " + shipping_address["last_name"]
+                    address_title = shipping_address["first_name"] + \
+                        " " + shipping_address["last_name"]
                     if not self.__country_exist(country_name, log):
                         self.__create_country(country_name, country_code)
                     if not self.__address_exist(address_title, "Shipping", log):
-                        self.__create_address(shipping_address, "Shipping", country_name, country_code, "", customer)
-                
+                        self.__create_address(
+                            shipping_address, "Shipping", country_name, country_code, "", customer)
+
                 return str(customer.name)
             else:
-                add_comment_to_job(log, f"Customer '{customer.name}' does not exist in ErpNext. Insert Error...")
-                return None                
+                add_comment_to_job(
+                    log, f"Customer '{customer.name}' does not exist in ErpNext. Insert Error...")
+                return None
 
-    def __create_address(self,addressData, address_type, country_name, country_code, email, customer):
+    def __create_address(self, addressData, address_type, country_name, country_code, email, customer):
 
         primary = 0
         shipping = 0
@@ -180,7 +203,7 @@ class Customer:
             "doctype": "Address",
             "address_title": title,
             "address_type": address_type,
-            "address_line1": addressData["street"] + " "+ addressData["house_number"],
+            "address_line1": addressData["street"] + " " + addressData["house_number"],
             "address_line2": "",
             "city": addressData["city"],
             "country": country_name,
@@ -211,8 +234,7 @@ class Customer:
                 customer.email_id = contact.email_id
             customer.save()
 
-
-    def __create_contact(self,data, customer):
+    def __create_contact(self, data, customer):
         splited_name = data.address_title.split()
 
         contact = frappe.get_doc({
@@ -250,8 +272,7 @@ class Customer:
 
         return contact
 
-
-    def __create_country(self,country_name, coutry_code):
+    def __create_country(self, country_name, coutry_code):
         country = frappe.get_doc({
             "doctype": "Country",
             "name": country_name,

@@ -20,19 +20,12 @@ after_install = "kaufland_integration.kaufland_integration.scheduler.after_insta
 after_uninstall = "kaufland_integration.kaufland_integration.scheduler.after_uninstall.uninstall"
 
 scheduler_events = {
-	# "all": [
-	# 	"kaufland_integration.scheduler.kaufland.test"
-	#  ],
-	# "daily": [
-	# 	"symfonia_integration.tasks.daily"
-	# ],
 	"hourly": [
 		"kaufland_integration.kaufland_integration.scheduler.kaufland.get_orders"
-	],
-	# "weekly": [
-	# 	"symfonia_integration.tasks.weekly"
-	# ],
-	# "monthly": [
-	# 	"symfonia_integration.tasks.monthly"
-	# ],
+	]
 }
+
+# Testing
+# -------
+
+before_tests = "kaufland_integration.kaufland_integration.tests.test_creditionals.beforeTestsCheckIfTherIsAConfiguration"

@@ -22,3 +22,5 @@ def get_orders():
         add_comment_to_job(last_log,f"No configuration for the application...")
            
     
+def test_get_orders():
+    print("dupa")    

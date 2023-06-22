@@ -1,17 +1,22 @@
 import unittest
 import frappe
 import frappe.defaults
-
+import subprocess
 
 class TestScheduler(unittest.TestCase):
     def setUp(self):
-        # Set up any necessary test data or configurations
-        pass
+        command = f"bench --site {frappe.local.site} scheduler enable"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
     def tearDown(self):
-        # Clean up any resources after each test
-        pass
+        command = f"bench --site {frappe.local.site} scheduler disable"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
-    def test_scheduler_job(self):
-        # Write your unit test for the scheduler job here
-        pass
+    def test_checkIfschedulerIsActivate(self):
+        command = f"bench --site {frappe.local.site} scheduler status"
+
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        status_output = result.stdout.strip() 
+        print(status_output)
+
+        self.assertIn("enabled", status_output )

@@ -12,6 +12,9 @@ class Customer:
 
     def __get_contry_name_by_code(self, contry_code):
         return str(CountryInfo(contry_code).name()).lower().capitalize()
+    
+    def __get_language_by_contry_code(self,contry_code):
+        return str(CountryInfo(contry_code).languages()[0])
 
     def __get_currency_by_code(self, contry_code):
         currencyList = CountryInfo(contry_code).currencies()
@@ -131,13 +134,14 @@ class Customer:
         if buyer is not None and biling_adrress is not None and shipping_address is not None:
             country_code = str(biling_adrress["country"]).lower()
             country_currency = self.__get_currency_by_code(country_code)
-
+            language_code = self.__get_language_by_contry_code(country_code)
+            
             customer = frappe.get_doc({
                 "doctype": "Customer",
                 "customer_name": biling_adrress["first_name"] + " " + biling_adrress["last_name"],
                 "mobile_no": shipping_address["phone"],
                 "email_id": buyer["email"],
-                "language": country_code,
+                "language": language_code,
                 "default_currency": country_currency,
                 "default_price_list": selling.get_price_list(),
                 "customer_type": self.__get_customer_type(biling_adrress["company_name"]),

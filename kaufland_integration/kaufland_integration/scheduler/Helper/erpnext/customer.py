@@ -247,6 +247,7 @@ class Customer:
             "last_name": splited_name[1],
             "phone": data.phone,
             "is_primary_contact": 1,
+            "status": "Open",
             "email_ids": [
                 {
                     "email_id": data.email_id,
